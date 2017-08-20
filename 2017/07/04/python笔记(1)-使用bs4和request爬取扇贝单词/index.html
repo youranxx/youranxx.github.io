@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>python笔记(1)—使用bs4和requests爬取扇贝单词 | Yorun</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+      <link rel="icon" href="/cat.png">
+    
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <link rel="stylesheet" href="/js/google-code-prettify/atelier-dune-light.css">
+
+  </head>
+
+  <body>
+
+<header>
+	<a id="logo" href="/" title="Yorun">
+	<img src="/cat.png" alt="Yorun"></a>
+	
+	
+		<!--搜索栏-->
+		<i class="js-toggle-search iconfont icon-search"></i>
+
+
+<form class="js-search search-form search-form--modal" method="get" action="https://www.google.com.hk/" role="search">
+	<div class="search-form__inner">
+		<div>
+			<i class="iconfont icon-search"></i>
+			 <input class="text-input" placeholder="Enter Key..." type="search"> 
+			<!--
+			<form action="//google.com/search" method="get" accept-charset="UTF-8" class="text"><input type="search" name="q" class="text-input" placeholder="123"><input type="hidden" name="sitesearch" value="http://yoursite.com"></form> -->
+		</div>
+	</div>
+</form>
+	
+
+	
+		<!--侧边导航栏-->
+		<a id="nav-toggle" href="#"><span></span></a>
+
+<nav>
+	<div class="menu-top-container">
+		<ul id="menu-top" class="menu">
+			
+				
+				<li class="current-menu-item">
+					<a href="/" target="_self">主页</a>
+				</li>
+			
+				
+				<li class="current-menu-item">
+					<a href="" target="_blank">书签</a>
+				</li>
+			
+		</ul>
+	</div>
+</nav>
+	
+
+</header>
+<div class="m-header ">
+	<section id="hero1" class="hero">
+		<div class="inner">
+		</div>
+	</section>
+	
+		<figure class="top-image" style='background-image: url(http://otqbh18oh.bkt.clouddn.com/blog/shanbay-word.png)' data-enable=false></figure>
+	
+</div>
+
+
+<!--文章列表-->
+<div class="wrapper">
+  
+    <!--文章-->
+<article>
+	
+  
+    <h1 class="post-title" itemprop="name">
+      python笔记(1)—使用bs4和requests爬取扇贝单词
+    </h1>
+  
+
+	<div class='post-body mb'>
+		<p>对于一个英语是硬伤的我来说，就只能老老实实的记单词咯。<br>然后就有了目标地址：<strong><a href="https://www.shanbay.com/wordbook/104791/" target="_blank" rel="external">扇贝 程序员必学电脑计算机专业英语词汇1700词</a></strong></p>
+<p>环境：Python3.5<br>模块：BeautifulSoup4, requests<br>思路：<br><a id="more"></a><br>1.通过主页面的 <strong><a href="https://www.shanbay.com/wordbook/104791" target="_blank" rel="external">地址</a></strong> 进入把需要用到的12个链接爬到手<br><img src="/images/shanbay1.png" alt="扇贝1"></p>
+<p>2.然后打开每个链接（<strong><a href="https://www.shanbay.com/wordlist/104791/201187/?page=1" target="_blank" rel="external">一个示例地址</a></strong>），把里面的单词和汉语翻译爬取下来<br><img src="/images/shanbay2.png" alt="扇贝2"></p>
+<p>3.最后把获取的单词和汉语翻译下载到本地文本</p>
+<h2 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h2><h4 id="引入相关包-requests下载html页面"><a href="#引入相关包-requests下载html页面" class="headerlink" title="引入相关包,requests下载html页面"></a>引入相关包,requests下载html页面</h4><pre><code>import requests
+from bs4 import BeautifulSoup
+import random
+
+items = [] # 需要下载的字段
+links = [] # 要使用的地址
+
+def get_html(url):
+    headers = {
+        &#39;User-Agent&#39;: get_user_agent() # 获取随机User-Agent
+    }
+    proxies = {
+        &#39;https&#39;: &#39;https://114.115.218.71&#39;
+    }
+    # 此项目不需User-Agent和代理，但为了笔记的完整性写上了
+    try:
+        r = requests.get(url, headers=headers, proxies=proxies, timeout=5)
+        r.raise_for_status()
+        r.encoding = r.apparent_encoding
+        return r.text
+    except:
+        return &#39;error&#39;
+</code></pre><h4 id="通过get-html-下载页面后解析页面信息"><a href="#通过get-html-下载页面后解析页面信息" class="headerlink" title="通过get_html()下载页面后解析页面信息"></a>通过get_html()下载页面后解析页面信息</h4><pre><code class="python">def get_info(url):
+    html = get_html(url)
+    soup = BeautifulSoup(html, &#39;lxml&#39;)
+    table = soup.find_all(&#39;tr&#39;, class_=&#39;row&#39;)
+
+    for td in table:
+        item = {} # 定义一个字典存放字段
+        item[&#39;word&#39;] = td.find(&#39;td&#39;, class_=&#39;span2&#39;).find(&#39;strong&#39;).text
+        item[&#39;translate&#39;] = &#39;&#39;.join(td.find(&#39;td&#39;, class_=&#39;span10&#39;).text.split(&#39;\n&#39;))
+        items.append(item) # 添加到列表中
+</code></pre>
+<h4 id="由主链接获取相关链接，然后迭代调用get-info"><a href="#由主链接获取相关链接，然后迭代调用get-info" class="headerlink" title="由主链接获取相关链接，然后迭代调用get_info()"></a>由主链接获取相关链接，然后迭代调用get_info()</h4><pre><code class="python">def get_links(url):
+    html = get_html(url)
+    soup = BeautifulSoup(html, &#39;lxml&#39;)
+    td = soup.find_all(&#39;td&#39;, class_=&#39;wordbook-wordlist-name&#39;)
+    for a in td:
+        link = a.find(&#39;a&#39;)[&#39;href&#39;]
+        for i in range(1,11):
+            links.append(&#39;https://www.shanbay.com&#39; + link + &#39;?page=&#39; + str(i))
+
+    for link in links:
+        get_info(link)
+</code></pre>
+<h4 id="把解析的内容下载到本地"><a href="#把解析的内容下载到本地" class="headerlink" title="把解析的内容下载到本地"></a>把解析的内容下载到本地</h4><pre><code class="python">def down_info():
+    with open(&#39;./word.txt&#39;, &#39;w&#39;) as f:
+        for item in items:
+            f.write(item[&#39;word&#39;] + &#39;\n&#39; + item[&#39;translate&#39;] + &#39;\n\n&#39;)
+        print(&#39;Download finished!\n共{}个&#39;.format(len(items)))
+</code></pre>
+<h4 id="看一下下载到本地的内容"><a href="#看一下下载到本地的内容" class="headerlink" title="看一下下载到本地的内容"></a>看一下下载到本地的内容</h4><p><img src="/images/shanbay3.png" alt="扇贝３"></p>
+<p>最后贴一下<strong><a href="https://github.com/yorunw/note/tree/master/shanbay/shanbay.py" target="_blank" rel="external">源码地址</a></strong>和<strong><a href="https://github.com/yorunw/note/tree/master/shanbay/word.txt" target="_blank" rel="external">程序员必学电脑计算机专业英语词汇1700词</a></strong></p>
+
+	</div>
+	<div class="meta split">
+		
+			<span>本文总阅读量 <span id="busuanzi_value_page_pv"></span> 次</span>
+		
+		<time class="post-date" datetime="2017-07-04T04:36:18.000Z" itemprop="datePublished">2017-07-04</time>
+	</div>
+</article>
+
+<!-- <div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2140207"></script> -->
+
+<!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTgxOS82Mzg1">
+<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+</script>
+<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+
+<!--评论-->
+
+	
+<div class="ds-thread" data-thread-key="python笔记(1)-使用bs4和request爬取扇贝单词" data-title="python笔记(1)—使用bs4和requests爬取扇贝单词" data-url="http://yoursite.com/2017/07/04/python笔记(1)-使用bs4和request爬取扇贝单词/"></div>
+<script type="text/javascript">
+
+var duoshuoQuery = {short_name:"yumemor"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0]
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+</script>
+
+
+
+<div id="back-to-top" class="back-to-top" style="display: block;">
+	<a href="#"><i class="iconfont icon-icon_up"></i></a>
+</div>
+
+  
+</div>
+
+
+  <svg id="bigTriangleColor" width="100%" height="40" viewBox="0 0 100 102" preserveAspectRatio="none">
+    <path d="M0 0 L50 100 L100 0 Z"></path>
+  </svg>
+
+  
+
+
+  <div class="wrapper"></div>
+
+
+
+
+
+
+<div class="fat-footer">
+	<div class="wrapper">
+		<div class="layout layout--center">
+			<div class="layout__item palm-mb">
+				<div class="media">
+					<img class="headimg" src='http://otqbh18oh.bkt.clouddn.com/blog/profile-photo-cat.jpg' alt='喵~'>
+					<div class="media__body">
+						<h4>Yorun</h4>
+						<p class='site-description'>怕什么真理无穷,进一寸有一寸的欢喜</p>
+					</div>
+				</div>
+				<div class="author-contact">
+					<ul>
+						
+							
+							<li>
+				        		<a href="https://github.com/yorunw" target="_blank">
+				        			
+				        				<i class="iconfont icon-github"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+							
+							<li>
+				        		<a href="https://www.zhihu.com/people/yorun" target="_blank">
+				        			
+										<i class="iconfont icon-zhihu"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+							
+							<li>
+				        		<a href="mailto:yorunw@gmail.com" target="_blank">
+				        			
+				        				<i class="iconfont icon-mail"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<footer class="footer" role="contentinfo">
+	<div class="wrapper wrapper--wide split split--responsive">
+		
+			<!-- <span>本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次</span> -->
+		
+		<span>Theme by <a href="http://github.com/yumemor">Yumemor</a>. Powered by <a href="http://hexo.io">Hexo</a></span>
+	</div>
+</footer>
+
+
+
+	<!--这里导入了 lib.js 里面涵盖了 jQuery 等框架 所以注释掉-->
+	<!--<script src="http://lib.sinaapp.com/js/jquery/2.0/jquery.min.js"></script>-->
+	<script src="/js/lib.js"></script>
+	<script src="/js/google-code-prettify/prettify.js"></script>
+	<script src="/js/module.js"></script>
+	<script src="/js/script.js"></script>
+	
+		<script async src="http://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</span>
+	
+	<script type='text/javascript'>
+		//代码高亮
+		$(document).ready(function(){
+	 		$('pre').addClass('prettyprint linenums').attr('style', 'overflow:auto;');
+   			prettyPrint();
+		});
+	</script>
+	</body>
+</html>
