@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yorun.win/2017/04/17/River-Flows-In-You/</loc>
+    
+    <lastmod>2017-08-20T13:04:29.534Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yorun.win/2017/07/04/python%E7%AC%94%E8%AE%B0(1)-%E4%BD%BF%E7%94%A8bs4%E5%92%8Crequest%E7%88%AC%E5%8F%96%E6%89%87%E8%B4%9D%E5%8D%95%E8%AF%8D/</loc>
     
     <lastmod>2017-08-17T07:56:38.457Z</lastmod>
@@ -19,13 +26,6 @@
     <loc>http://yorun.win/2017/04/15/Hello-World/</loc>
     
     <lastmod>2017-08-01T11:21:43.933Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yorun.win/2017/04/17/River-Flows-In-You/</loc>
-    
-    <lastmod>2017-08-01T10:38:29.292Z</lastmod>
     
   </url>
   
