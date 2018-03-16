@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>制作简单词云 | Yorun</title>
+    <meta name="baidu-site-verification" content="jyHZax4wH8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+      <link rel="icon" href="/cat.png">
+    
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <link rel="stylesheet" href="/js/google-code-prettify/atelier-dune-light.css">
+
+  </head>
+
+  <body>
+
+<header>
+	<a id="logo" href="/" title="Yorun">
+	<img src="/cat.png" alt="Yorun"></a>
+	
+	
+		<!--搜索栏-->
+		<i class="js-toggle-search iconfont icon-search"></i>
+
+
+<form class="js-search search-form search-form--modal" method="get" role="search">
+	<div class="search-form__inner">
+		<div>
+			<i class="iconfont icon-search"></i>
+			 <input class="text-input" placeholder="Enter Key..." type="search"> 
+		</div>
+	</div>
+</form>
+	
+
+	
+		<!--侧边导航栏-->
+		<a id="nav-toggle" href="#"><span></span></a>
+
+<nav>
+	<div class="menu-top-container">
+		<ul id="menu-top" class="menu">
+			
+				
+				<li class="current-menu-item">
+					<a href="/" target="_self">主页</a>
+				</li>
+			
+				
+				<li class="current-menu-item">
+					<a href="" target="_self">书签</a>
+				</li>
+			
+		</ul>
+	</div>
+</nav>
+	
+
+</header>
+<div class="m-header ">
+	<section id="hero1" class="hero">
+		<div class="inner">
+		</div>
+	</section>
+	
+		<figure class="top-image" style='background-image: url(/images/WordCloud.jpg)' data-enable=false></figure>
+	
+</div>
+
+
+<!--文章列表-->
+<div class="wrapper">
+  
+    <!--文章-->
+<article>
+	
+  
+    <h1 class="post-title" itemprop="name">
+      制作简单词云
+    </h1>
+  
+
+	<div class='post-body mb'>
+		<p>在网上有各种各样的一键生成词云的工具，起初我觉得好高大上，但是只有固定的图片模板，使用时有局限。就在想有没有什么方法可以用自定义图片，后来一次机会发现可以用Python实现，然后在这里做一个记录。</p>
+<p>环境：Python3.5<br>模块：jieba，wordcloud，PIL，numpy，matplotlib</p>
+<h2 id="1-引入相关模块"><a href="#1-引入相关模块" class="headerlink" title="1.引入相关模块"></a>1.引入相关模块</h2><pre><code># 分词
+import jieba
+# 生成词云的一个库
+from wordcloud import WordCloud, ImageColorGenerator
+# 图片的显示以及文字位置的计算
+from PIL import Image
+import numpy as np
+import matplotlib.pyplot as plt
+</code></pre><h2 id="2-分词处理（注：英文文本可以跳过此步骤）"><a href="#2-分词处理（注：英文文本可以跳过此步骤）" class="headerlink" title="2.分词处理（注：英文文本可以跳过此步骤）"></a>2.分词处理（注：英文文本可以跳过此步骤）</h2><h4 id="1-准备一段文本，保存为-txt格式。"><a href="#1-准备一段文本，保存为-txt格式。" class="headerlink" title="1.准备一段文本，保存为.txt格式。"></a>1.准备一段文本，保存为.txt格式。</h4><h4 id="2-使用jieba分词。"><a href="#2-使用jieba分词。" class="headerlink" title="2.使用jieba分词。"></a>2.使用jieba分词。</h4><pre><code>fr = open(&#39;test.txt&#39;,&#39;r&#39;).read()
+result = jieba.lcut(fr, cut_all=Ture) # 使用全模式cut_all把所有的词拆开
+</code></pre><h4 id="3-统计词频"><a href="#3-统计词频" class="headerlink" title="3.统计词频"></a>3.统计词频</h4><pre><code>word = {}  # 必须为{&#39;词&#39;: 数量}形式
+for i in result:
+    if not i in word:
+        word[i] = 1
+    word[i] += 1
+</code></pre><h2 id="3-制作词云图片"><a href="#3-制作词云图片" class="headerlink" title="3.制作词云图片"></a>3.制作词云图片</h2><h4 id="1-准备一张-jpg图片"><a href="#1-准备一张-jpg图片" class="headerlink" title="1.准备一张.jpg图片"></a>1.准备一张.jpg图片</h4><p><img src="/images/wordcloud_test.jpg" alt="wordcloud"></p>
+<h4 id="2-Wordcloud中文显示的一点问题处理"><a href="#2-Wordcloud中文显示的一点问题处理" class="headerlink" title="2.Wordcloud中文显示的一点问题处理"></a>2.Wordcloud中文显示的一点问题处理</h4><p>下载一个中文字体，例如simher.ttf<br>然后<strong>pip3 show wordcloud</strong>查看wordcloud模块路径<br>把下载的字体放到wordcloud模块的根目录下<br>修改<strong>wordcloud.py</strong>的<strong>FONT_PATH</strong></p>
+<pre><code>FONT_PATH = os.environ.get(&quot;FONT_PATH&quot;, 
+os.path.join(os.path.dirname(__file__),&quot;simhei.ttf&quot;))
+</code></pre><h4 id="3-生成词云的一些准备"><a href="#3-生成词云的一些准备" class="headerlink" title="3.生成词云的一些准备"></a>3.生成词云的一些准备</h4><pre><code># 打开一张图片
+alice_mask = np.array(Image.open(&#39;test.jpg&#39;, &#39;r&#39;))
+
+# 新建一个Wordcloud
+wc = WordCloud(
+    background_color=&quot;white&quot;, # 背景颜色
+    max_words=10000, # 最多词数数量
+    # font_step=2,   # 词的步长
+    max_font_size=100, # 词的最大字号
+   # min_font_size=5, # 词的最小字号
+   # random_state=19, # 颜色随机方案
+   mask=alice_mask,   # 图片掩罩，就是使用上面打开的图片生成词云
+   stopwords={&quot;词云&quot;}  # 屏蔽的词
+)
+
+# 创建该Wordcloud
+wc.fit_words(word) # fit_words, 字典格式
+&#39;&#39;&#39;
+若是英文文本，不需要分词，直接打开一个文本fr传入下面方法即可
+wc.generate(fr) # genarete, 文本文件  
+&#39;&#39;&#39;
+
+# 使用背景图的颜色
+image_colors = ImageColorGenerator(alice_mask)
+</code></pre><h4 id="4-图片显示的样式"><a href="#4-图片显示的样式" class="headerlink" title="4.图片显示的样式"></a>4.图片显示的样式</h4><pre><code>&#39;&#39;&#39;随机颜色显示&#39;&#39;&#39;
+# 以图片的形式显示
+plt.imshow(wc)
+# 标题
+plt.title(&#39;random color&#39;)
+# 有无坐标
+plt.axis(&#39;off&#39;)
+
+
+&#39;&#39;&#39;按图片颜色显示&#39;&#39;&#39;
+# 新建画布
+plt.figure()
+plt.imshow(wc.recolor(color_func=image_colors))
+plt.title(&#39;image color&#39;)
+plt.axis(&#39;off&#39;)
+
+&#39;&#39;&#39;显示原图&#39;&#39;&#39;
+plt.figure()
+plt.imshow(alice_mask)
+plt.title(&#39;&#39;)
+plt.axis(&#39;off&#39;)
+
+# 显示
+plt.show()
+</code></pre><p><img src="/images/wordcloud_genaral.png" alt="wordcloud"></p>
+<h4 id="参考的两篇文档"><a href="#参考的两篇文档" class="headerlink" title="参考的两篇文档"></a>参考的两篇文档</h4><p><strong><a href="https://github.com/fxsjy/jieba/blob/master/README.md" target="_blank" rel="external">jieba分词</a></strong><br><strong><a href="https://zhuanlan.zhihu.com/p/20436581" target="_blank" rel="external">Wordcloud中文翻译</a></strong></p>
+
+	</div>
+	<div class="meta split" style="text-align:right;">
+		
+			<span>本文总阅读量 <span id="busuanzi_value_page_pv"></span> 次</span>
+		
+		<time class="post-date" datetime="2017-08-02T18:42:21.000Z" itemprop="datePublished">2017-08-03</time>
+	</div>
+</article>
+
+<!-- <div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2140207"></script> -->
+
+<!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTgxOS82Mzg1">
+<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+</script>
+<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+
+<!--评论-->
+
+
+	
+
+	
+
+
+
+
+<div id="back-to-top" class="back-to-top" style="display: block;">
+	<a href="#"><i class="iconfont icon-icon_up"></i></a>
+</div>
+
+  
+</div>
+
+
+  <svg id="bigTriangleColor" width="100%" height="40" viewBox="0 0 100 102" preserveAspectRatio="none">
+    <path d="M0 0 L50 100 L100 0 Z"></path>
+  </svg>
+
+  
+
+
+  <div class="wrapper"></div>
+
+
+
+
+
+
+<div class="fat-footer">
+	<div class="wrapper">
+		<div class="layout layout--center">
+			<div class="layout__item palm-mb">
+				<div class="media">
+					<img class="headimg" src='/images/profile-photo-cat.jpg' alt='喵~'>
+					<div class="media__body">
+						<h4>Yorun</h4>
+						<p class='site-description'>怕什么真理无穷,进一寸有一寸的欢喜</p>
+					</div>
+				</div>
+				<div class="author-contact">
+					<ul>
+						
+							
+							<li>
+				        		<a href="https://github.com/yorunw" target="_blank">
+				        			
+				        				<i class="iconfont icon-github"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+							
+							<li>
+				        		<a href="mailto:yorunw@gmail.com" target="_blank">
+				        			
+				        				<i class="iconfont icon-mail"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+							
+							<li>
+				        		<a href="http://www.jianshu.com/" target="_blank">
+				        			
+				        				<i class="iconfont icon-jianshu"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<footer class="footer" role="contentinfo">
+	<div class="wrapper wrapper--wide split split--responsive">
+		
+			<!-- <span>本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次</span> -->
+		
+		<span>Theme by <a href="https://github.com/justpsvm/hexo-theme-varaint">varaint</a>. Powered by <a href="http://hexo.io">Hexo</a></span>
+	</div>
+</footer>
+
+
+
+	<!--这里导入了 lib.js 里面涵盖了 jQuery 等框架 所以注释掉-->
+	<!--<script src="http://lib.sinaapp.com/js/jquery/2.0/jquery.min.js"></script>-->
+	<script src="/js/lib.js"></script>
+	<script src="/js/google-code-prettify/prettify.js"></script>
+	<script src="/js/module.js"></script>
+	<script src="/js/script.js"></script>
+	
+		<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</span>
+	
+	<script type='text/javascript'>
+		//代码高亮
+		$(document).ready(function(){
+	 		$('pre').addClass('prettyprint linenums').attr('style', 'overflow:auto;');
+   			prettyPrint();
+		});
+	</script>
+	</body>
+</html>
