@@ -1208,7 +1208,7 @@ a[data-tooltip][data-placement="top"]::after {
   color: #888;
 }
 .split {
-  text-align: center;
+  text-align: right;
 }
 footer .wrapper {
   max-width: 800px;

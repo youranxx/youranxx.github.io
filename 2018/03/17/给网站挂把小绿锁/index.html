@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     
-    <title>sshtunnel操作远程主机服务 | Yorun</title>
+    <title>给网站挂把小绿锁 | Yorun</title>
     <meta name="baidu-site-verification" content="jyHZax4wH8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
@@ -68,7 +68,7 @@
 		</div>
 	</section>
 	
-		<figure class="top-image" data-enable=true></figure>
+		<figure class="top-image" style='background-image: url(/images/https.jpg)' data-enable=false></figure>
 	
 </div>
 
@@ -81,53 +81,25 @@
 	
   
     <h1 class="post-title" itemprop="name">
-      sshtunnel操作远程主机服务
+      给网站挂把小绿锁
     </h1>
   
 
 	<div class='post-body mb'>
-		<p>有这样一个场景，A主机上有一个爬虫程序，要把爬取的数据保存到B主机的数据库上。最先想到的就是<strong>pymysql.connect(host=’B主机的IP’)</strong>，但是有一个问题是要登录B主机后才能操作B主机的数据库。解决方案是使用端口绑定。</p>
-<p>使用的模块：pymysql,sshtunnel</p>
-<pre><code>import pymysql # python操作mysql的模块
-from sshtunnel import SSHTunnelForwarder # 端口绑定模块
+		<p>话说现在谷歌、火狐都在全面推行https，当浏览特定网站时，其浏览器就会出现一个很小的绿锁，并在地址旁标有“安全”字样。这个标志意味着这家网站使用了加密的网络协议HTTPS。虽说我这个博客是个静态网站，但是也应该尽可能提高安全性能，巴拉巴拉… 好吧，我就是想增加逼格。(￢_￢)</p>
+<p>首先，GitHub Pages不支持上传SSL证书。<br><strong><a href="https://www.cloudflare.com" target="_blank" rel="external">CloudFlare</a></strong>是一家CDN提供商，它提供了免费的https服务(但不是应用SSL证书)。实现模式就是，用户到CDN服务器的连接为https，而CDN服务器到GithubPage服务器的连接为http，就是在CDN服务器那里加上反向代理。</p>
+<p>1.注册并登录CloudFlare,添加自己的域名并自动解析域名的DNS服务器，然后在域名注册商的控制台把自己域名的DNS服务器地址换成CloudFlare提供的DNS地址。等待域名在Cloudflare上处于活动状态。</p>
+<p>2.在DNS页中添加两条A记录，把域名分别指向 192.30.252.153/192.30.252.154 GitHub空间的地址。</p>
+<p>3.在Crypto页中把SSL选项选为Flexible，就是浏览器到Cloudflare为https,Cloudflare到GitHub还是http。</p>
+<p>4.稍等片刻～</p>
+<p>完</p>
 
-&#39;&#39;&#39;
-打开ssh登录远程主机，把远程主机3306端口绑定到本地10000端口，
-在本地操作10000端口就是在操作远程3306端口。
-&#39;&#39;&#39;
-with SSHTunnelForwarder(
-     (&#39;B主机的IP&#39;, 22),  # 使用ssh端口（22）登录
-    ssh_username=&quot;host_name&quot;,   # B主机账号
-    ssh_password=&quot;host_passwd&quot;, # B主机密码
-    # ssh_pkey=&quot;/home/kk/key.pem&quot;, # 公匙登录，可选
-    remote_bind_address=(&#39;127.0.0.1&#39;, 3306), # B主机端口，mysql：3306
-    local_bind_address=(&#39;127.0.0.1&#39;,10000)   # A主机端口，不要用内定的（0-1023）
-) as tunnel:
-
-conn = pymysql.connect(
-    host=&#39;127.0.0.1&#39;,
-    port=10000, # 在A主机操作10000端口就行了
-    user=&#39;username&#39;,
-    passwd=&#39;passwd&#39;,
-    db=&#39;dbname&#39;,
-    charset=&#39;utf8&#39;,
-    cursorclass=pymysql.cursors.DictCursor
-)
-
-try:
-    with conn.cursor() as cursor:
-        sql = &#39;insert into tablename (id,name,age) values (%s,%s,%s)&#39;
-        cursor.execute(sql, (id,name,age))
-        conn.commit()
-finally:
-    conn.close()
-</code></pre>
 	</div>
 	<div class="meta split" style="text-align:right;">
 		
 			<span>本文总阅读量 <span id="busuanzi_value_page_pv"></span> 次</span>
 		
-		<time class="post-date" datetime="2017-08-10T15:25:51.000Z" itemprop="datePublished">2017-08-10</time>
+		<time class="post-date" datetime="2018-03-16T16:45:18.000Z" itemprop="datePublished">2018-03-17</time>
 	</div>
 </article>
 
@@ -234,11 +206,16 @@ finally:
 </div>
 
 <footer class="footer" role="contentinfo">
+	<!--<div class="wrapper wrapper--wide split split--responsive">
+
+	</div>-->
 	<div class="wrapper wrapper--wide split split--responsive">
+		<span style="float:left;">© 2017-2018 by Yorun.</span>
+
 		
 			<!-- <span>本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次</span> -->
 		
-		<span>Theme by <a href="https://github.com/justpsvm/hexo-theme-varaint">varaint</a>. Powered by <a href="http://hexo.io">Hexo</a></span>
+		<span>Theme by <a href="https://github.com/justpsvm/hexo-theme-varaint">varaint</a>. <!--Powered by <a href="http://hexo.io">Hexo</a>--> </span>
 	</div>
 </footer>
 
