@@ -88,9 +88,9 @@
 	<div class='post-body mb'>
 		<p>话说现在谷歌、火狐都在全面推行https，当浏览特定网站时，其浏览器就会出现一个很小的绿锁，并在地址旁标有“安全”字样。这个标志意味着这家网站使用了加密的网络协议HTTPS。虽说我这个博客是个静态网站，但是也应该尽可能提高安全性能，巴拉巴拉… 好吧，我就是想增加逼格。(￢_￢)</p>
 <p>首先，GitHub Pages不支持上传SSL证书。<br><strong><a href="https://www.cloudflare.com" target="_blank" rel="external">CloudFlare</a></strong>是一家CDN提供商，它提供了免费的https服务(但不是应用SSL证书)。实现模式就是，用户到CDN服务器的连接为https，而CDN服务器到GithubPage服务器的连接为http，就是在CDN服务器那里加上反向代理。</p>
-<p>1.注册并登录CloudFlare,添加自己的域名并自动解析域名的DNS服务器，然后在域名注册商的控制台把自己域名的DNS服务器地址换成CloudFlare提供的DNS地址。等待域名在Cloudflare上处于活动状态。</p>
-<p>2.在DNS页中添加四条A记录，把域名分别指向<br>185.199.108.153<br>185.199.109.153<br>185.199.110.153<br>185.199.111.153<br>这四个GitHub空间的地址。</p>
-<p>3.在Crypto页中把SSL选项选为Flexible，就是浏览器到Cloudflare为https,Cloudflare到GitHub还是http。</p>
+<p>1.注册并登录CloudFlare，添加自己的域名并自动解析域名的DNS服务器，然后在域名注册商的控制台把自己域名的DNS服务器地址换成CloudFlare提供的DNS地址。等待域名在Cloudflare上处于活动状态。</p>
+<p>2.在DNS页中添加两条A记录，把域名分别指向<br>192.30.252.153<br>192.30.252.154<br>这两个GitHub空间的地址。</p>
+<p>3.在Crypto页中把SSL选项选为Flexible，就是浏览器到Cloudflare为https，Cloudflare到GitHub还是http。</p>
 <p>4.稍等片刻～</p>
 <p>完</p>
 
