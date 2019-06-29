@@ -26,7 +26,7 @@
  
             $('.js-search .text-input').keydown(function (event) {
                 if (event.keyCode == 13) {
-                    location.href = 'https://www.google.com.hk/search?q=site:yorun.win ' + $(this).val();
+                    location.href = 'https://www.google.com.hk/search?q=site:yorunw.cc ' + $(this).val();
                     return false;
                 }
             })
