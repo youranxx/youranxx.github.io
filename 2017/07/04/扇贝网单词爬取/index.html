@@ -3,16 +3,16 @@
   <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     
-    <title>扇贝网单词爬取 | Yorun</title>
+    <title>扇贝网单词爬取 | Yorun Blog</title>
     <meta name="baidu-site-verification" content="jyHZax4wH8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
+
     
-      <link rel="icon" href="/cat.png">
+      <link rel="icon" href="/favicon.ico">
     
-    
-      <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    
+
+    <link rel="stylesheet" href="/css/iconfont/iconfont.css">
 
     <link rel="stylesheet" href="/css/style.css">
 
@@ -23,8 +23,8 @@
   <body>
 </body></html>
 <header>
-	<a id="logo" href="/" title="Yorun">
-	<img src="/cat.png" alt="Yorun"></a>
+	<a id="logo" href="/" title="Yorun Blog">
+	<img src="/favicon.ico" alt="Yorun Blog"></a>
 	
 	
 		<!--搜索栏-->
@@ -90,7 +90,9 @@
 
 	<div class='post-body mb'>
 		<p>对于一个英语是硬伤的我来说，就只能老老实实的记单词咯。<br>然后就有了目标地址：<strong><a href="https://www.shanbay.com/wordbook/104791/" target="_blank" rel="noopener">扇贝 程序员必学电脑计算机专业英语词汇1700词</a></strong></p>
-<p>环境：Python3.5<br>模块：BeautifulSoup4, requests<br>思路：<br><a id="more"></a><br>1.通过主页面的 <strong><a href="https://www.shanbay.com/wordbook/104791" target="_blank" rel="noopener">地址</a></strong> 进入把需要用到的12个链接爬到手<br><img src="/images/shanbay1.png" alt="扇贝1"></p>
+<p>环境：Python3.5<br>模块：BeautifulSoup4, requests<br>思路：</p>
+<a id="more"></a>
+<p>1.通过主页面的 <strong><a href="https://www.shanbay.com/wordbook/104791" target="_blank" rel="noopener">地址</a></strong> 进入把需要用到的12个链接爬到手<br><img src="/images/shanbay1.png" alt="扇贝1"></p>
 <p>2.然后打开每个链接（<strong><a href="https://www.shanbay.com/wordlist/104791/201187/?page=1" target="_blank" rel="noopener">一个示例地址</a></strong>），把里面的单词和汉语翻译爬取下来<br><img src="/images/shanbay2.png" alt="扇贝2"></p>
 <p>3.最后把获取的单词和汉语翻译下载到本地文本</p>
 <h2 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h2><h4 id="引入相关包-requests下载html页面"><a href="#引入相关包-requests下载html页面" class="headerlink" title="引入相关包,requests下载html页面"></a>引入相关包,requests下载html页面</h4><pre><code>import requests
@@ -114,8 +116,7 @@ def get_html(url):
         r.encoding = r.apparent_encoding
         return r.text
     except:
-        return &#39;error&#39;
-</code></pre><h4 id="通过get-html-下载页面后解析页面信息"><a href="#通过get-html-下载页面后解析页面信息" class="headerlink" title="通过get_html()下载页面后解析页面信息"></a>通过get_html()下载页面后解析页面信息</h4><pre><code class="python">def get_info(url):
+        return &#39;error&#39;</code></pre><h4 id="通过get-html-下载页面后解析页面信息"><a href="#通过get-html-下载页面后解析页面信息" class="headerlink" title="通过get_html()下载页面后解析页面信息"></a>通过get_html()下载页面后解析页面信息</h4><pre><code class="python">def get_info(url):
     html = get_html(url)
     soup = BeautifulSoup(html, &#39;lxml&#39;)
     table = soup.find_all(&#39;tr&#39;, class_=&#39;row&#39;)
@@ -124,8 +125,7 @@ def get_html(url):
         item = {} # 定义一个字典存放字段
         item[&#39;word&#39;] = td.find(&#39;td&#39;,class_=&#39;span2&#39;).find(&#39;strong&#39;).text
         item[&#39;translate&#39;] = &#39;&#39;.join(td.find(&#39;td&#39;, class_=&#39;span10&#39;).text.split(&#39;\n&#39;))
-       items.append(item) # 添加到列表中
-</code></pre>
+       items.append(item) # 添加到列表中</code></pre>
 <h4 id="由主链接获取相关链接，然后迭代调用get-info"><a href="#由主链接获取相关链接，然后迭代调用get-info" class="headerlink" title="由主链接获取相关链接，然后迭代调用get_info()"></a>由主链接获取相关链接，然后迭代调用get_info()</h4><pre><code class="python">def get_links(url):
     html = get_html(url)
     soup = BeautifulSoup(html, &#39;lxml&#39;)
@@ -136,59 +136,48 @@ def get_html(url):
             links.append(&#39;https://www.shanbay.com&#39; + link + &#39;?page=&#39; + str(i))
 
     for link in links:
-        get_info(link) 
-</code></pre>
+        get_info(link) </code></pre>
 <h4 id="把解析的内容下载到本地"><a href="#把解析的内容下载到本地" class="headerlink" title="把解析的内容下载到本地"></a>把解析的内容下载到本地</h4><pre><code class="python">def down_info():
     with open(&#39;./word.txt&#39;, &#39;w&#39;) as f:
         for item in items:
             f.write(item[&#39;word&#39;] + &#39;\n&#39; + item[&#39;translate&#39;] + &#39;\n\n&#39;)
-        print(&#39;Download finished!\n共{}个&#39;.format(len(items)))
-</code></pre>
+        print(&#39;Download finished!\n共{}个&#39;.format(len(items)))</code></pre>
 <h4 id="看一下下载到本地的内容"><a href="#看一下下载到本地的内容" class="headerlink" title="看一下下载到本地的内容"></a>看一下下载到本地的内容</h4><p><img src="/images/shanbay3.png" alt="扇贝３"></p>
 <p>最后贴一下<strong><a href="https://github.com/yorunw/note/tree/master/shanbay/shanbay.py" target="_blank" rel="noopener">源码地址</a></strong>和<strong><a href="https://github.com/yorunw/note/tree/master/shanbay/word.txt" target="_blank" rel="noopener">程序员必学电脑计算机专业英语词汇1700词</a></strong></p>
 
 	</div>
 	<div class="meta split" style="text-align:right;">
 		
-			<span>本文总阅读量 <span id="busuanzi_value_page_pv"></span> 次</span>
+		<span>本文总阅读量 <span id="busuanzi_value_page_pv"></span> 次</span>
 		
 		<time class="post-date" datetime="2017-07-04T04:36:18.000Z" itemprop="datePublished">2017-07-04</time>
 	</div>
 </article>
 
-<!-- 来必力City版安装代码 -->
-<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTgxOS82Mzg1">
-<script type="text/javascript">
-   (function(d, s) {
-       var j, e = d.getElementsByTagName(s)[0];
-
-       if (typeof LivereTower === 'function') { return; }
-
-       j = d.createElement(s);
-       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
-       j.async = true;
-
-       e.parentNode.insertBefore(j, e);
-   })(document, 'script');
-</script>
-<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
-</div>
-<!-- City版安装代码已完成 -->
-
 <!--评论-->
 
+	<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTgxOS82Mzg1">
+    <script type="text/javascript">
+        (function (d, s) {
+            var j, e = d.getElementsByTagName(s)[0];
 
-	
+            if (typeof LivereTower === 'function') { return; }
 
-	
+            j = d.createElement(s);
+            j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+            j.async = true;
 
+            e.parentNode.insertBefore(j, e);
+        })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
 
 
 <!-- 返回头 -->
-<!-- <div id="back-to-top" class="back-to-top" style="display: block;">
-	<a href="#"><i class="iconfont icon-icon_up"></i></a>
-</div> -->
-
+<div id="back-to-top" class="back-to-top" style="display: none;">
+	<a href="javascript:void(0)"><i class="iconfont icon-icon_up"></i></a>
+</div>
   
 </div>
 
@@ -199,8 +188,8 @@ def get_html(url):
 
   
 
-
   <div class="wrapper"></div>
+
 
 
 
@@ -212,7 +201,7 @@ def get_html(url):
 		<div class="layout layout--center">
 			<div class="layout__item palm-mb">
 				<div class="media">
-					<img class="headimg" src='/images/profile-photo-cat.jpg' alt='喵~'>
+					<img class="headimg" src='/images/profile-photo-cat.jpg' alt='Yorun'>
 					<div class="media__body">
 						<h4>Yorun</h4>
 						<p class='site-description'>怕什么真理无穷,进一寸有一寸的欢喜</p>
@@ -241,7 +230,7 @@ def get_html(url):
 						
 							
 							<li>
-				        		<a href="http://www.jianshu.com/users/2fe0c0c3a7bf/timeline" target="_blank">
+				        		<a href="https://www.jianshu.com/u/2fe0c0c3a7bf" target="_blank">
 				        			
 				        				<i class="iconfont icon-jianshu"></i>
 				        			
@@ -254,7 +243,6 @@ def get_html(url):
 		</div>
 	</div>
 </div>
-
 <footer class="footer" role="contentinfo">
 	<!--<div class="wrapper wrapper--wide split split--responsive">
 
@@ -263,27 +251,28 @@ def get_html(url):
 		<span style="float:left;">© 2017-2018 by Yorun.</span>
 
 		
-			<!-- <span>本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次</span> -->
+		<!-- <span>本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次</span> -->
 		
-		<span>Theme by <a href="https://github.com/justpsvm/hexo-theme-varaint">varaint</a>. <!--Powered by <a href="http://hexo.io">Hexo</a>--> </span>
+		<span>Theme by <a href="https://github.com/justpsvm/hexo-theme-varaint">varaint</a>. 
+			<!--Powered by <a href="http://hexo.io">Hexo</a>--> 
+		</span>
 	</div>
 </footer>
 
-
-	<!--这里导入了 lib.js 里面涵盖了 jQuery 等框架 所以注释掉-->
-	<!--<script src="http://lib.sinaapp.com/js/jquery/2.0/jquery.min.js"></script>-->
 	<script src="/js/lib.js"></script>
-	<script src="/js/google-code-prettify/prettify.js"></script>
 	<script src="/js/module.js"></script>
 	<script src="/js/script.js"></script>
+	<script src="/js/google-code-prettify/prettify.js"></script>
+
 	
-</span>
+		<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 	
+		
 	<script type='text/javascript'>
 		//代码高亮
-		$(document).ready(function(){
-	 		$('pre').addClass('prettyprint linenums').attr('style', 'overflow:auto;');
-   			prettyPrint();
+		$(document).ready(function () {
+			$('pre').addClass('prettyprint linenums').attr('style', 'overflow:auto;');
+			prettyPrint();
 		});
 	</script>
 	</body>
