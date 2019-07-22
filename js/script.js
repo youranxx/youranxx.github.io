@@ -108,6 +108,10 @@
             window.scrollTo(0, 0);
         })
 
+        //代码高亮
+        $('pre').addClass('prettyprint linenums').attr('style', 'overflow:auto;');
+		prettyPrint();
+
     })
 
 }(jQuery, window));
